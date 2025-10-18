@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/porto/:path*",
-      "destination": "https://api-porto.luzyver.dev/porto/:path*"
+      "destination": "https://api-porto.luzyver.dev/:path*"
     }
   ],
   "headers": [

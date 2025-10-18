@@ -1,0 +1,48 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.config import get_settings
+from app.routers import health, auth, projects, images, messages, comments, experiences, blog, stats
+
+settings = get_settings()
+
+app = FastAPI(
+    title="Porto API",
+    description="Portfolio API built with FastAPI",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
+    servers=[
+        {"url": "https://api.luzyver.dev/porto", "description": "Production"},
+        {"url": "http://localhost:8000", "description": "Development"}
+    ]
+)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Include routers without prefix (gateway handles it)
+app.include_router(health.router)
+app.include_router(auth.router)
+app.include_router(projects.router)
+app.include_router(images.router)
+app.include_router(messages.router)
+app.include_router(comments.router)
+app.include_router(experiences.router)
+app.include_router(blog.router)
+app.include_router(stats.router)
+
+
+@app.get("/")
+async def root():
+    return {
+        "message": "Porto API",
+        "docs": "/docs",
+        "version": "1.0.0"
+    }
