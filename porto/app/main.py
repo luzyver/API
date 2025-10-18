@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import get_settings
 from app.routers import health, auth, projects, images, messages, comments, experiences, blog, stats
@@ -16,18 +16,6 @@ app = FastAPI(
         {"url": "http://localhost:8000", "description": "Development (Local)"}
     ]
 )
-
-# Middleware to block api-porto.luzyver.dev
-@app.middleware("http")
-async def block_old_domain(request: Request, call_next):
-    host = request.headers.get("host", "")
-    if host.startswith("api-porto.luzyver.dev"):
-        return Response(
-            content='{"detail":"This domain is deprecated. Please use https://api.luzyver.dev/porto"}',
-            status_code=403,
-            media_type="application/json"
-        )
-    return await call_next(request)
 
 # CORS middleware
 app.add_middleware(
