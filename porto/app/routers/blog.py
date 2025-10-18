@@ -62,6 +62,7 @@ async def get_blog_post(slug: str, user: Optional[User] = Depends(get_current_us
     return result.data[0]
 
 
+@router.get("/admin")
 @router.get("/admin/posts")
 async def get_blog_posts_admin(
     q: Optional[str] = Query(None),
@@ -81,6 +82,7 @@ async def get_blog_posts_admin(
     return {"items": result.data, "total": result.count}
 
 
+@router.post("/admin")
 @router.post("/admin/posts")
 async def create_blog_post(post: BlogPost, user: User = Depends(require_admin)):
     """Create new blog post (admin only)"""
