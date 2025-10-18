@@ -9,12 +9,11 @@ app = FastAPI(
     title="Porto API",
     description="Portfolio API built with FastAPI",
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
-    openapi_url="/openapi.json",
+    root_path="/porto",
+    root_path_in_servers=False,
     servers=[
         {"url": "https://api.luzyver.dev/porto", "description": "Production"},
-        {"url": "http://localhost:8000", "description": "Development"}
+        {"url": "http://localhost:8000", "description": "Development (Local)"}
     ]
 )
 
