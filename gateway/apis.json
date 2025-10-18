@@ -1,0 +1,10 @@
+[
+  {
+    "id": "porto",
+    "name": "Porto API",
+    "description": "Portfolio management and content delivery API",
+    "baseUrl": "https://api.luzyver.dev/porto",
+    "healthEndpoint": "https://api.luzyver.dev/porto/health",
+    "docsUrl": "/porto/docs"
+  }
+]
