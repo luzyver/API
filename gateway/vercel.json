@@ -4,6 +4,10 @@
     {
       "source": "/porto/:path*",
       "destination": "https://api-porto.luzyver.dev/:path*"
+    },
+    {
+      "source": "/flexifi/:path*",
+      "destination": "https://api.luzyver.dev/flexifi/:path*"
     }
   ],
   "headers": [

@@ -6,5 +6,13 @@
     "baseUrl": "https://api.luzyver.dev/porto",
     "healthEndpoint": "https://api.luzyver.dev/porto/health",
     "docsUrl": "/porto/docs"
+  },
+  {
+    "id": "flexifi",
+    "name": "FlexiFI API",
+    "description": "Personal financial management API with transaction tracking and budgeting",
+    "baseUrl": "https://api.luzyver.dev/flexifi",
+    "healthEndpoint": "https://api.luzyver.dev/flexifi/health",
+    "docsUrl": "/flexifi/docs"
   }
 ]
