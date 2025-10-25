@@ -36,12 +36,3 @@ app.include_router(comments.router)
 app.include_router(experiences.router)
 app.include_router(blog.router)
 app.include_router(stats.router)
-
-
-@app.get("/")
-async def root():
-    return {
-        "message": "Porto API",
-        "docs": "/docs",
-        "version": "1.0.0"
-    }

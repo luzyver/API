@@ -62,8 +62,7 @@ async def get_blog_post(slug: str, user: Optional[User] = Depends(get_current_us
     return result.data[0]
 
 
-@router.get("/admin")
-@router.get("/admin/posts")
+@router.get("/posts")
 async def get_blog_posts_admin(
     q: Optional[str] = Query(None),
     limit: int = Query(50, le=200),
@@ -82,8 +81,7 @@ async def get_blog_posts_admin(
     return {"items": result.data, "total": result.count}
 
 
-@router.post("/admin")
-@router.post("/admin/posts")
+@router.post("/posts")
 async def create_blog_post(post: BlogPost, user: User = Depends(require_admin)):
     """Create new blog post (admin only)"""
     post_data = post.dict(exclude_none=True)
@@ -98,7 +96,7 @@ async def create_blog_post(post: BlogPost, user: User = Depends(require_admin)):
     raise HTTPException(status_code=500, detail="failed_to_create_blog_post")
 
 
-@router.post("/admin/update")
+@router.post("/update")
 async def update_blog_post(data: dict, user: User = Depends(require_admin)):
     """Update blog post (admin only)"""
     post_id = data.get("id")
@@ -117,7 +115,7 @@ async def update_blog_post(data: dict, user: User = Depends(require_admin)):
     raise HTTPException(status_code=404, detail="blog_post_not_found")
 
 
-@router.delete("/admin/{post_id}")
+@router.delete("/{post_id}")
 async def delete_blog_post(post_id: str, user: User = Depends(require_admin)):
     """Delete blog post (admin only)"""
     supabase.table("blog_posts").delete().eq("id", post_id).execute()
