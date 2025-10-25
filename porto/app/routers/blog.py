@@ -21,7 +21,7 @@ def generate_slug(title: str) -> str:
 async def get_blog_posts(
     q: Optional[str] = Query(None),
     tag: Optional[str] = Query(None),
-    limit: int = Query(12, le=50),
+    limit: int = Query(12, le=200),
     offset: int = Query(0, ge=0),
     user: Optional[User] = Depends(get_current_user)
 ):
@@ -32,8 +32,11 @@ async def get_blog_posts(
         admin_result = supabase.table("admins").select("user_id").eq("user_id", user.id).execute()
         is_admin = len(admin_result.data) > 0
 
+    # Admin gets all fields, public gets limited fields
+    fields = "*" if is_admin else "id,title,slug,excerpt,featured_image,tags,published,created_at,updated_at"
+
     query = supabase.table("blog_posts").select(
-        "id,title,slug,excerpt,featured_image,tags,published,created_at,updated_at",
+        fields,
         count="exact"
     ).order("created_at", desc=True)
 
@@ -46,25 +49,6 @@ async def get_blog_posts(
 
     if tag:
         query = query.contains("tags", [tag])
-
-    query = query.range(offset, offset + limit - 1)
-    result = query.execute()
-
-    return {"items": result.data, "total": result.count}
-
-
-@router.get("/posts")
-async def get_blog_posts_admin(
-    q: Optional[str] = Query(None),
-    limit: int = Query(50, le=200),
-    offset: int = Query(0, ge=0),
-    user: User = Depends(require_admin)
-):
-    """Get all blog posts (admin only)"""
-    query = supabase.table("blog_posts").select("*", count="exact").order("created_at", desc=True)
-
-    if q:
-        query = query.or_(f"title.ilike.%{q}%,excerpt.ilike.%{q}%,content.ilike.%{q}%")
 
     query = query.range(offset, offset + limit - 1)
     result = query.execute()
