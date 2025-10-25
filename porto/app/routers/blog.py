@@ -53,6 +53,25 @@ async def get_blog_posts(
     return {"items": result.data, "total": result.count}
 
 
+@router.get("/posts")
+async def get_blog_posts_admin(
+    q: Optional[str] = Query(None),
+    limit: int = Query(50, le=200),
+    offset: int = Query(0, ge=0),
+    user: User = Depends(require_admin)
+):
+    """Get all blog posts (admin only)"""
+    query = supabase.table("blog_posts").select("*", count="exact").order("created_at", desc=True)
+
+    if q:
+        query = query.or_(f"title.ilike.%{q}%,excerpt.ilike.%{q}%,content.ilike.%{q}%")
+
+    query = query.range(offset, offset + limit - 1)
+    result = query.execute()
+
+    return {"items": result.data, "total": result.count}
+
+
 @router.get("/{slug}")
 async def get_blog_post(slug: str, user: Optional[User] = Depends(get_current_user)):
     """Get single blog post by slug (public for published, admin for all)"""
@@ -71,25 +90,6 @@ async def get_blog_post(slug: str, user: Optional[User] = Depends(get_current_us
         raise HTTPException(status_code=404, detail="post_not_found")
 
     return result.data[0]
-
-
-@router.get("/posts")
-async def get_blog_posts_admin(
-    q: Optional[str] = Query(None),
-    limit: int = Query(50, le=200),
-    offset: int = Query(0, ge=0),
-    user: User = Depends(require_admin)
-):
-    """Get all blog posts (admin only)"""
-    query = supabase.table("blog_posts").select("*", count="exact").order("created_at", desc=True)
-
-    if q:
-        query = query.or_(f"title.ilike.%{q}%,excerpt.ilike.%{q}%,content.ilike.%{q}%")
-
-    query = query.range(offset, offset + limit - 1)
-    result = query.execute()
-
-    return {"items": result.data, "total": result.count}
 
 
 @router.post("/posts")
