@@ -22,13 +22,24 @@ async def get_blog_posts(
     q: Optional[str] = Query(None),
     tag: Optional[str] = Query(None),
     limit: int = Query(12, le=50),
-    offset: int = Query(0, ge=0)
+    offset: int = Query(0, ge=0),
+    user: Optional[User] = Depends(get_current_user)
 ):
-    """Get published blog posts (public)"""
+    """Get blog posts (public shows published only, admin shows all)"""
+    # Check if user is admin
+    is_admin = False
+    if user:
+        admin_result = supabase.table("admins").select("user_id").eq("user_id", user.id).execute()
+        is_admin = len(admin_result.data) > 0
+
     query = supabase.table("blog_posts").select(
-        "id,title,slug,excerpt,featured_image,tags,created_at,updated_at",
+        "id,title,slug,excerpt,featured_image,tags,published,created_at,updated_at",
         count="exact"
-    ).eq("published", True).order("created_at", desc=True)
+    ).order("created_at", desc=True)
+
+    # Only filter by published if not admin
+    if not is_admin:
+        query = query.eq("published", True)
 
     if q:
         query = query.or_(f"title.ilike.%{q}%,excerpt.ilike.%{q}%,content.ilike.%{q}%")
